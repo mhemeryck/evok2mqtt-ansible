@@ -1,0 +1,21 @@
+---
+- hosts: testpi
+  vars:
+    ansible_python_interpreter: /usr/bin/python3 # Force py3
+    ansible_ssh_password: unipi.technology # not really a secret
+    ansible_ssh_user: unipi
+    mqtt_host: shuttle.lan
+    username: mhemeryck
+    wifi_ssd: luctor_IoT
+    wifi_passphrase: "{{ lookup('community.general.passwordstore', 'home/luctor') }}"
+  roles:
+    - account
+    - hostname
+    - wifi
+    - evok2mqtt
+- hosts: testpi
+  vars:
+    ansible_python_interpreter: /usr/bin/python3 # Force py3
+    username: mhemeryck
+  roles:
+    - security

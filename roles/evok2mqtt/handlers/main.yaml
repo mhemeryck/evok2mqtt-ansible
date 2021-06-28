@@ -1,0 +1,8 @@
+---
+- name: start evok2mqtt service
+  become: yes
+  systemd:
+    name: evok2mqtt
+    state: started
+    daemon_reload: yes
+    enabled: yes

@@ -1,0 +1,35 @@
+---
+- name: upgrade
+  become: yes
+  apt:
+    upgrade: dist
+- name: create evok2mqtt user
+  become: yes
+  user:
+    name: evok2mqtt
+    shell: /sbin/nologin
+    state: present
+    create_home: no
+- name: add evok2mqtt unit file
+  become: yes
+  template:
+    src: evok2mqtt.service.j2
+    dest: /etc/systemd/system/evok2mqtt.service
+    owner: root
+    group: root
+    mode: 0644
+- name: install evok
+  become: yes
+  apt:
+    pkg:
+      - evok
+      - python3-pip
+      - git
+    state: present
+    update_cache: yes
+- name: install evok2mqtt
+  become: yes
+  pip:
+    name: git+https://github.com/mhemeryck/evok2mqtt.git
+  notify:
+    - start evok2mqtt service

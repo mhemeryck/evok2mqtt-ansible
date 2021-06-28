@@ -1,0 +1,29 @@
+---
+- name: disable password-based login
+  become: yes
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^(#)?{{ item }}"
+    line: "{{ item }} no"
+  loop:
+    - ChallengeResponseAuthentication
+    - PasswordAuthentication
+    - PermitRootLogin
+  notify:
+    - reload sshd service
+- name: get all pids for unipi user
+  shell: |
+    pgrep -u unipi
+  changed_when: true
+  register: unipi_pids
+- name: wait for all these unipi processes to have finished
+  wait_for:
+    path: "/proc/{{ item }}/status"
+    state: absent
+  with_items: "{{ unipi_pids.stdout_lines }}"
+- name: remove insecure user
+  become: yes
+  user:
+    name: unipi
+    state: absent
+    remove: yes
