@@ -1,0 +1,23 @@
+---
+- name: add my own user
+  become: yes
+  user:
+    name: "{{ username }}"
+    groups: "sudo"
+    shell: "/bin/bash"
+    state: present
+- name: allow user passwordless sudo
+  become: yes
+  lineinfile:
+    path: "/etc/sudoers.d/{{ username }}"
+    line: "{{ username }} ALL=(ALL) NOPASSWD: ALL"
+    create: yes
+    owner: root
+    group: root
+    mode: 0644
+- name: install public keys from github
+  become: yes
+  authorized_key:
+    user: "{{ username }}"
+    state: present
+    key: "https://github.com/{{ username }}.keys"

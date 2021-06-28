@@ -1,0 +1,27 @@
+---
+- name: calculate salted wpa passphrase
+  become: yes
+  shell: |
+    set -o pipefail && echo "{{ wifi_passphrase|quote }}" | wpa_passphrase "{{ wifi_ssd|quote }}"
+  args:
+    executable: /bin/bash
+  register: wpa_pass_output
+  changed_when: true
+- name: extract salted passphrase from command output
+  set_fact:
+    wpa_passphrase_salted: "{{ wpa_pass_output.stdout | regex_search('\\s+psk=([0-9a-z]+)', '\\1', multiline=True) | first }}"
+- name: add wpa supplicant file
+  become: yes
+  vars:
+    wpa_country: BE
+    wpa_ctrl_interface: DIR=/var/run/wpa_supplicant GROUP=netdev
+    wpa_update_config: 1
+  template:
+    src: wpa_supplicant.conf.j2
+    dest: /etc/wpa_supplicant/wpa_supplicant.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - reload dhcpcd
+    - reconfigure wpa supplicant

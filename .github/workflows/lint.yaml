@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: install ansible-lint
+        run: |
+          pip3 install ansible==2.10.4
+          pip3 install ansible-lint==5.0.12
+
+      - name: run ansible-lint
+        run: ansible-lint

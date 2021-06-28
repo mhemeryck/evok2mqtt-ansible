@@ -1,0 +1,3 @@
+collections:
+  # Use for password manager
+  - name: community.general

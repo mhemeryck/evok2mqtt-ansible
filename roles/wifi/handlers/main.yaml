@@ -1,0 +1,9 @@
+---
+- name: reload dhcpcd
+  become: yes
+  systemd:
+    name: dhcpcd
+    state: restarted
+- name: reconfigure wpa supplicant
+  become: yes
+  command: wpa_cli -i wlan0 reconfigure

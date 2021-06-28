@@ -1,0 +1,14 @@
+[Unit]
+Description=evok2mqtt
+After=network-online.target
+
+[Service]
+Type=simple
+User=evok2mqtt
+Group=evok2mqtt
+ExecStart=/usr/local/bin/evok2mqtt {{ mqtt_host }}
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

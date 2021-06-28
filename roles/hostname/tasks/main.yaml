@@ -1,0 +1,9 @@
+---
+- name: Load mapping from external file
+  include_vars:
+    file: hostnames.yaml
+    name: names
+- name: Update hostname based on host
+  become: yes
+  hostname:
+    name: "{{ names[ansible_host] }}"
